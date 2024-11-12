@@ -1,0 +1,157 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Class to store account details
+class Account {
+private:
+    string accountNumber;
+    int pin;
+    double balance;
+
+public:
+    // Constructor to initialize an account
+    Account(string accNum, int p, double bal) {
+        accountNumber = accNum;
+        pin = p;
+        balance = bal;
+    }
+
+    // Method to verify the PIN
+    bool verifyPin(int inputPin) {
+        return pin == inputPin;
+    }
+
+    // Getter for account number
+    string getAccountNumber() {
+        return accountNumber;
+    }
+
+    // Method to check balance
+    double getBalance() {
+        return balance;
+    }
+
+    // Method to deposit money
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            cout << "Deposited: $" << amount << endl;
+        } else {
+            cout << "Invalid deposit amount." << endl;
+        }
+    }
+
+    // Method to withdraw money
+    bool withdraw(double amount) {
+        if (amount > balance) {
+            cout << "Insufficient funds." << endl;
+            return false;
+        } else if (amount <= 0) {
+            cout << "Invalid withdrawal amount." << endl;
+            return false;
+        } else {
+            balance -= amount;
+            cout << "Withdrawn: $" << amount << endl;
+            return true;
+        }
+    }
+};
+
+// Class for ATM operations
+class ATM {
+private:
+    Account* currentAccount;
+
+public:
+    ATM() {
+        currentAccount = nullptr;
+    }
+
+    // Method to login
+    bool login(Account& account, int inputPin) {
+        if (account.verifyPin(inputPin)) {
+            currentAccount = &account;
+            cout << "Login successful." << endl;
+            return true;
+        } else {
+            cout << "Incorrect PIN." << endl;
+            return false;
+        }
+    }
+
+    // Method to display menu
+    void displayMenu() {
+        cout << "\nATM Menu:\n";
+        cout << "1. Check Balance\n";
+        cout << "2. Deposit\n";
+        cout << "3. Withdraw\n";
+        cout << "4. Exit\n";
+        cout << "Select an option: ";
+    }
+
+    // Method to check balance
+    void checkBalance() {
+        if (currentAccount) {
+            cout << "Balance: $" << currentAccount->getBalance() << endl;
+        } else {
+            cout << "Please log in first." << endl;
+        }
+    }
+
+    // Method to deposit money
+    void depositMoney() {
+        double amount;
+        cout << "Enter amount to deposit: ";
+        cin >> amount;
+        currentAccount->deposit(amount);
+    }
+
+    // Method to withdraw money
+    void withdrawMoney() {
+        double amount;
+        cout << "Enter amount to withdraw: ";
+        cin >> amount;
+        currentAccount->withdraw(amount);
+    }
+};
+
+// Main function to simulate the ATM system
+int main() {
+    // Create a test account
+    Account account1("123456789", 1234, 1000.0);
+    ATM atm;
+
+    int pin;
+    cout << "Welcome to the ATM!" << endl;
+    cout << "Enter your PIN: ";
+    cin >> pin;
+
+    // Login process
+    if (atm.login(account1, pin)) {
+        int choice;
+        do {
+            atm.displayMenu();
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    atm.checkBalance();
+                    break;
+                case 2:
+                    atm.depositMoney();
+                    break;
+                case 3:
+                    atm.withdrawMoney();
+                    break;
+                case 4:
+                    cout << "Exiting..." << endl;
+                    break;
+                default:
+                    cout << "Invalid option. Try again." << endl;
+            }
+        } while (choice != 4);
+    }
+
+    return 0;
+}
